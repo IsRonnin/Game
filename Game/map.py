@@ -1,19 +1,7 @@
 from utils import randbool, randcell, randcell2
-TREE_BONUS = 10
-# карта
-# 🌳 🌊 🚁 🟩 🔥 🏥 💛 💵 📦 ⚡ 🏆 ⛅ ⬜ ⬛ 🪣
-# 0 поля
-# 1 дерево
-# 2 река
-# 3 госпиталь
-# 4 магазин улучшений
-# 5 Огонь просто!
-# 6 - 7 - граница
-# 8 Хеликоптер Хеликоптер!
-# 9 ведёрко!
-# 10 искал медь а нашёл золото ;3
+from config import *
 
-ASSETS = "🟩🌳🌊🏥📦🔥⬜⬛🚁🪣🏆" # пак ассетов для кратенькой рисовашки
+
 class Map():
 
     def generate_rivers(self, l):
@@ -42,13 +30,20 @@ class Map():
             self.cells[rx][ry] = 1 
 
 
-    def print_map(self, helico): 
-
+    def print_map(self, helico, clouds): 
         print(ASSETS[7] * (self.w + 2))
         for ri in range(self.h):
             print(ASSETS[7], end='')
-            [print(ASSETS[8] if (helico.x == ri and helico.y == ci)
-                    else ASSETS[self.cells[ri][ci]], end='') for ci in range(self.w)] 
+            for ci in range(self.w):
+                cell = self.cells[ri][ci]
+                if clouds.cells[ri][ci] == 11 and self.cells[ri][ci] in [0, 1]:
+                    print(ASSETS[clouds.cells[ri][ci]], end='')
+                elif clouds.cells[ri][ci] == 12 and self.cells[ri][ci] in [1, 2]:
+                    print(ASSETS[clouds.cells[ri][ci]], end='')
+                elif (helico.x == ri and helico.y == ci):
+                    print(ASSETS[8], end='')
+                elif cell >= 0 and cell < len(ASSETS):
+                    print(ASSETS[cell], end='')
             print(ASSETS[7])
         print(ASSETS[7] * (self.w + 2))
 
@@ -81,6 +76,23 @@ class Map():
             helico.score += TREE_BONUS
             helico.tank -= 1
             self.cells[helico.x][helico.y] = 1
+        elif self.cells[helico.x][helico.y] == 4 and helico.score >= (UPGRADE_COST * helico.mxtank ) / 2:
+            helico.score -= (UPGRADE_COST * helico.mxtank ) / 2
+            helico.mxtank += 1
+
+    
+    def generate_upgrade_shop(self):
+        rc = randcell(self.h, self.w)
+        rx, ry = rc[0], rc[1]
+        self.cells[rx][ry] = 4
+
+    def generate_hospital(self):
+        rc = randcell(self.h, self.w)
+        rx, ry = rc[0], rc[1]
+        if self.cells[rx][ry] != 4:
+            self.cells[rx][ry] = 3
+        else:
+            self.generate_hospital()
 
     def __init__(self, h, w):
         self.w = w

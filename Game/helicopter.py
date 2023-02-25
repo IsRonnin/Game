@@ -1,10 +1,9 @@
 from utils import randbool, randcell, randcell2
-from map import ASSETS
+from config import *
 class Helicopter:
     tank = 0 # вода
     mxtank = 1 # макс воды
     score = 0 # очки! всем нужны, мне кстати тоже (0-0)
-
     def __init__(self, w, h):
         self.w = w
         self.h = h
