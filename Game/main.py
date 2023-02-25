@@ -9,7 +9,7 @@ import os, time
 # Ну пусть логика...
 
 c = Clouds(MAP_W, MAP_H)
-m = Map(MAP_H, MAP_W)
+m = Map(MAP_H, MAP_W)                        #  ___
 false = True # сюда не смотреть! идите дальше! /-_-\
 m.generate_forests(3, 10) # генерация леса     \___/
 m.generate_rivers(10) # Генерация реки
