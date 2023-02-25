@@ -1,4 +1,5 @@
 from utils import randbool, randcell, randcell2
+TREE_BONUS = 10
 # карта
 # 🌳 🌊 🚁 🟩 🔥 🏥 💛 💵 📦 ⚡ 🏆 ⛅ ⬜ ⬛ 🪣
 # 0 поля
@@ -72,6 +73,14 @@ class Map():
 
         for _ in range(5):
             self.add_fire() # ай йа йай костыль! незя так! ну... вам незя а мне можно.
+    
+    def process_helicopter(self, helico):
+        if self.cells[helico.x][helico.y] == 2:
+            helico.tank = helico.mxtank
+        elif self.cells[helico.x][helico.y] == 5 and helico.tank > 0:
+            helico.score += TREE_BONUS
+            helico.tank -= 1
+            self.cells[helico.x][helico.y] = 1
 
     def __init__(self, h, w):
         self.w = w

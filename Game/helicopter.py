@@ -11,6 +11,8 @@ class Helicopter:
         rc = randcell(self.h, self.w)
         rx, ry = rc[0], rc[1]
         self.x, self.y = rx, ry
+
+    # Вот енто стыбжено с lms  
     def move(self, dx, dy):
         nx, ny = dx + self.x, dy + self.y
         if nx >= 0 and ny >= 0 and nx < self.h and ny < self.w:
