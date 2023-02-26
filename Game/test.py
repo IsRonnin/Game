@@ -1,32 +1,68 @@
-'''def mdk(func):
-    def inner(*args):
-        print("decorated")
-        answ = {}
-        [answ.update({args[a] : "good"}) if args[a] >= 100 else answ.update({args[a] : "bad"}) for a in range(len(args))]
-        return answ
-    
-    return inner
+ranks = ["Pushover", "Novice", "Fighter", "Warrior", "Veteran", "Sage",
+         "Elite", "Conqueror", "Champion", "Master", "Greatest"]
 
-@mdk
-def ret_n(*args):
-    for i in args:
-        print(i)
-    return list(args)
 
-integ = 1000
-print(ret_n(integ, 125, 215))
+class Warrior():
+    def __init__(self):
+        self.experience = 100
+        if self.experience > 10000:
+            self.experience = 10000
+        self.experience = 100
+        self.level = self.experience // 100
+        self.rank = ranks[self.level // 10]
+        self.achievements = []
 
-def table_things(**kwargs):
-    print(kwargs.items())
-    for name, value in kwargs.items():
-        print( '{0} = {1}'.format(name, value))
-'''
-from collections import Counter as cont
-# 0 index 1 game_name 2 publisher 
+    def __call__(self, *args, **kwargs):
+        print(self.experience)
+        print(self.level)
+        print(self.rank)
+        print(self.achievements)
 
-bd = [[0, 'doom', 'xbox'], [1, 'doom', 'microsoft'], [2, 'nfs', 'ms'], [5, 'nfs', 'xbox']]
-print(cont([a[1] for a in bd]))
-c = cont([a[1] for a in bd])
-ans = {}
-[[ans.update({bd[ji][1]: c[ki]}) for ji in range(len(bd))]for ki in c.keys()]
-print(ans)
+    def training(self, d):
+        print(d)
+        description = d[0]
+        expa = d[1]
+        level = d[2]
+        if level > self.level:
+            return "Not strong enough"
+        self.experience += expa
+        self.level = self.experience // 100
+        if self.level > 100:
+            self.level = 100
+            self.experience = 10000
+        self.rank = ranks[self.level // 10]
+        self.achievements.append(description)
+        return description
+
+    def battle(self, o_lvl):
+        print(o_lvl)
+        if o_lvl not in range(1, 101):
+            return "Invalid level"
+        if o_lvl // 10 > self.level // 10 and o_lvl >= self.level + 5:
+            return "You've been defeated"
+        if o_lvl >= self.level + 1:
+            self.experience += 20 * (o_lvl-self.level) * (o_lvl-self.level)
+            self.level = self.experience // 100
+            if self.level > 100:
+                self.level = 100
+                self.experience = 10000
+            self.rank = ranks[self.level // 10]
+            return "An intense fight"
+        if o_lvl == self.level:
+            self.experience += 10
+            self.level = self.experience // 100
+            if self.level > 100:
+                self.level = 100
+                self.experience = 10000
+            self.rank = ranks[self.level // 10]
+            return "A good fight"
+        if o_lvl == self.level - 1:
+            self.experience += 5
+            self.level = self.experience // 100
+            if self.level > 100:
+                self.level = 100
+                self.experience = 10000
+            self.rank = ranks[self.level // 10]
+            return "A good fight"
+        if o_lvl <= self.level - 2:
+            return "Easy fight"

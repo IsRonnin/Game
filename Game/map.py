@@ -38,7 +38,7 @@ class Map():
                 cell = self.cells[ri][ci]
                 if clouds.cells[ri][ci] == 11 and self.cells[ri][ci] in [0, 1]:
                     print(ASSETS[clouds.cells[ri][ci]], end='')
-                elif clouds.cells[ri][ci] == 12 and self.cells[ri][ci] in [1, 2]:
+                elif clouds.cells[ri][ci] == 12 and self.cells[ri][ci] in [0, 1]:
                     print(ASSETS[clouds.cells[ri][ci]], end='')
                 elif (helico.x == ri and helico.y == ci):
                     print(ASSETS[8], end='')
@@ -68,8 +68,8 @@ class Map():
 
         for _ in range(5):
             self.add_fire() # ай йа йай костыль! незя так! ну... вам незя а мне можно.
-    
-    def process_helicopter(self, helico):
+
+    def process_helicopter(self, helico, clouds):
         if self.cells[helico.x][helico.y] == 2:
             helico.tank = helico.mxtank
         elif self.cells[helico.x][helico.y] == 5 and helico.tank > 0:
@@ -79,7 +79,14 @@ class Map():
         elif self.cells[helico.x][helico.y] == 4 and helico.score >= (UPGRADE_COST * helico.mxtank ) / 2:
             helico.score -= (UPGRADE_COST * helico.mxtank ) / 2
             helico.mxtank += 1
-
+        elif self.cells[helico.x][helico.y] == 3 and helico.score >= LIFE_COST:
+            helico.lives += 10
+            helico.score -= LIFE_COST
+        elif clouds.cells[helico.x][helico.y] == 12:
+            helico.lifes -= CLOUDS_DAMAGE
+            clouds.cells[helico.x][helico.y] = 0
+            if helico.lifes <= 0:
+                helico.game_over()
     
     def generate_upgrade_shop(self):
         rc = randcell(self.h, self.w)
@@ -93,6 +100,12 @@ class Map():
             self.cells[rx][ry] = 3
         else:
             self.generate_hospital()
+
+    def export_data(self):
+        return {'cells': self.cells}
+    
+    def import_data(self, data):
+        self.cells = data['cells'] or [[0 for _ in range(self.w)] for _ in range(self.h)]
 
     def __init__(self, h, w):
         self.w = w
